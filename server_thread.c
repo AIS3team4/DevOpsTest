@@ -15,11 +15,11 @@ struct client{
 	int id;
 };
 struct client fd[Max];
-
+int cli_number=0;
 void *server_thread(void *);
  
 int main(int argc,char **argv){
-	int sockfd,connectfd,i,cli_number=0;
+	int sockfd,connectfd,i;
 	struct sockaddr_in serv_addr,cli_addr;
 	socklen_t cli_len;
 	
@@ -32,7 +32,7 @@ int main(int argc,char **argv){
 		printf("socket error!\n");
 
 	serv_addr.sin_family=AF_INET;		//set family
-	serv_addr.sin_port=htons(80);		//set port 
+	serv_addr.sin_port=htons(9877);		//set port 
 	serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);	//set 每個都可接收
 
 	bind(sockfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr));
@@ -79,6 +79,7 @@ void *server_thread(void* client){
 				}
 			}
 			printf("%d exit!\n",cli_fd.id);
+			cli_number--;
 			break;
 		}
 		for(i=0;i<Max;i++){
