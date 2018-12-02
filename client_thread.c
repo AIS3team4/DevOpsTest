@@ -8,13 +8,15 @@
 #include<netdb.h>
 #include<strings.h>
 #include<string.h>
-void* recv_thread(void*);
-char sendbuf[2048],recvbuf[2048];
 
+void* recv_thread(void*);
+char sendbuf[2048]={0},recvbuf[2048]={0},name[2048]={0};
+int sendfile_y=0;
 int main(int argc,char **argv){
 	int num_bytes,sockfd;
 	struct sockaddr_in cli_addr;
 	struct hostent *he;
+
 	if(argc!=2)
 		printf("usage:<ipaddress>!\n");
 	
@@ -29,14 +31,30 @@ int main(int argc,char **argv){
 	if((he=gethostbyname(argv[1])) == NULL)
 		printf("inet_pton error!\n");
 	cli_addr.sin_addr=*((struct in_addr*)he->h_addr);
+
 	if(connect(sockfd, (struct sockaddr *) &cli_addr, sizeof(cli_addr)) < 0)
 		printf("connect error!\n");
+	
+	printf("請輸入名子:");
+	fgets(name,2048,stdin);
+        send(sockfd,name,(strlen(name)),0);       //設定名子
+
 	pthread_t tid;
 	pthread_create(&tid,NULL,(void*)recv_thread,(void*)&sockfd);
 	
 	while(1){
 		memset(sendbuf,0,sizeof(sendbuf));
 		fgets(sendbuf,2048,stdin);
+		//if(sendbuf[0]=='y'||sendbuf[0]=='n'){
+		//	char temp[2048];
+		//	memset(temp,0,sizeof(temp));
+		//	temp[0]=sendbuf[0];
+		//	sendbuf[1]=' ';
+		//	strcat(temp,name);
+		//	memset(sendbuf,0,sizeof(sendbuf));
+		//	strcpy(sendbuf,temp);
+		//}
+		
 		send(sockfd,sendbuf,(strlen(sendbuf)),0);
 		
 	}
@@ -47,12 +65,12 @@ void* recv_thread(void *fd){
 	int cli_fd=*(int*)fd;
 
 	while(1){
-		if((recv(cli_fd,recvbuf,2048,0))==-1){
+		if((recv(cli_fd,recvbuf,2048,0))<=0){
 			printf("recv error!\n");
 			exit(1);
 		}
-	printf("%s",recvbuf);
-	memset(recvbuf,0,sizeof(recvbuf));
+		printf("%s",recvbuf);
+		memset(recvbuf,0,sizeof(recvbuf));
 	}
 }
 
