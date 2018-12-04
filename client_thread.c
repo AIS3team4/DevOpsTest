@@ -45,16 +45,16 @@ int main(int argc,char **argv){
 	while(1){
 		memset(sendbuf,0,sizeof(sendbuf));
 		fgets(sendbuf,2048,stdin);
-		//if(sendbuf[0]=='y'||sendbuf[0]=='n'){
+		//if(strncmp(sendbuf,"yy",2)==0||strncmp(sendbuf,"nn",2)){
 		//	char temp[2048];
 		//	memset(temp,0,sizeof(temp));
 		//	temp[0]=sendbuf[0];
-		//	sendbuf[1]=' ';
-		//	strcat(temp,name);
-		//	memset(sendbuf,0,sizeof(sendbuf));
-		//	strcpy(sendbuf,temp);
+		//	temp[1]=sendbuf[1];
+		//	temp[2]=' ';
+		//	strncat(temp,name,strlen(name)-1);
+		//	send(sockfd,temp,(strlen(temp)),0);
 		//}
-		
+		//else
 		send(sockfd,sendbuf,(strlen(sendbuf)),0);
 		
 	}

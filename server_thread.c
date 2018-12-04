@@ -108,19 +108,11 @@ void *server_thread(void* client){
 			for(i=0;i<Max;i++){
                                 if(strncmp(&buf[5],fd[i].name,sizeof(fd[i].name))==0){
 					num_sendfile=i;
-					//char sendto[]="file";
-					//send(fd[i].id,sendto,sizeof(sendto),0);
-	                        	//int fptr;
-                       	 		//char notice[]="accept file(y or n)\0";
-                        			
-                        		//fptr=open("test.txt",O_RDONLY);
-                        		//sendfile(fd[i].id,fptr,NULL,fsize("test.txt"));
-
                                         break;
 				}
                 	}
 		}
-		else if((strncmp(buf,"yy",2)==0||strncmp(buf,"nn",2)==0)&&num_sendfile>=0){
+		else if((strncmp(buf,"yy",2)==0||strncmp(buf,"nn",2)==0)&&num_sendfile>=0&&strncmp(&buf[3],cli_fd.name,sizeof(cli_fd.name)-1)==0){
                                         int fptr;
                                         //char notice[]="accept file(y or n)\0";
 
