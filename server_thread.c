@@ -30,7 +30,7 @@ int main(int argc,char **argv){
 	struct sockaddr_in serv_addr,cli_addr;
 	socklen_t cli_len;
 	
-	for(i=0;i<Max;i++){
+	for(i=0;i<Max;i++){			//initialized
 		fd[i].id=0;
 		memset(fd[i].name,0,2048);
 	}
@@ -57,7 +57,7 @@ int main(int argc,char **argv){
 			printf("no more client!\n");
 			close(connectfd);
 		}
-		for(i=0;i<Max;i++){
+		for(i=0;i<Max;i++){		//設定存在的fd
 			if(fd[i].id==0){
 				fd[i].id=connectfd;
 				fd[i].num=i;
@@ -67,7 +67,7 @@ int main(int argc,char **argv){
 			}
 		}
 		pthread_t tid;
-		pthread_create(&tid,NULL,(void*)server_thread,&fd[i]);
+		pthread_create(&tid,NULL,(void*)server_thread,&fd[i]);	//建立執行緒
 
 		cli_number++;
 	}
@@ -75,15 +75,14 @@ int main(int argc,char **argv){
 	close(sockfd);	
 	return 0;
 }
-void *server_thread(void* client){
+void *server_thread(void* client){	
 	struct client cli_fd=*(struct client*)client;
 	int num_bytes,i;
 	char buf[2048];
-
-//	if(fd[num_sendfile].id!=cli_fd.id){	
+	
 	while(1){
 		memset(buf,0,2048);
-		if((num_bytes=recv(cli_fd.id,buf,2048,0))<=0){
+		if((num_bytes=recv(cli_fd.id,buf,2048,0))<=0){	//接收clienet傳來的資料,如果小於等於零則代表關掉連線
 			for(i=0;i<Max;i++){
 				if(fd[i].id==cli_fd.id){
 					fd[i].id=0;
@@ -95,7 +94,7 @@ void *server_thread(void* client){
 			break;
 		}
 
-		if(strncmp(buf,"show",4)==0){
+		if(strncmp(buf,"show",4)==0){	//印出上線人名
 			int j;	
 			for(i=0;i<Max;i++){
 				for(j=0;j<Max;j++){
@@ -104,23 +103,22 @@ void *server_thread(void* client){
 				}
 			}
 		}
-		else if(strncmp(buf,"file",4)==0){
+		else if(strncmp(buf,"file",4)==0){	//傳檔設定
 			for(i=0;i<Max;i++){
                                 if(strncmp(&buf[5],fd[i].name,sizeof(fd[i].name))==0){
 					num_sendfile=i;
                                         break;
 				}
                 	}
-		}
+		}//接收到client端接受傳檔或不接受
 		else if((strncmp(buf,"yy",2)==0||strncmp(buf,"nn",2)==0)&&num_sendfile>=0&&strncmp(&buf[3],cli_fd.name,sizeof(cli_fd.name)-1)==0){
                                         int fptr;
-                                        //char notice[]="accept file(y or n)\0";
 
                                         fptr=open("test.txt",O_RDONLY);
                                         sendfile(fd[num_sendfile].id,fptr,NULL,fsize("test.txt"));
 				num_sendfile=-1;
 		}
-		else if(strncmp(buf,"secret",6)==0){
+		else if(strncmp(buf,"secret",6)==0){	//密語
 			for(i=0;i<Max;i++){
 				if(strncmp(&buf[7],fd[i].name,sizeof(fd[i].name))==0){
 
@@ -129,7 +127,7 @@ void *server_thread(void* client){
 				}
 			}
 		}
-		else if(strncmp(buf,"exit",4)==0)
+		else if(strncmp(buf,"exit",4)==0)	//離開密語
 			cli_fd.flag=-1;
 		else{
 			if(cli_fd.flag<0){
@@ -142,34 +140,13 @@ void *server_thread(void* client){
 				}
 			}
 			else{
-				send(fd[cli_fd.flag].id,fd[cli_fd.num].name,sizeof(fd[cli_fd.num].name),0);
-				send(fd[cli_fd.flag].id,": ",2,0);
+				send(fd[cli_fd.flag].id,fd[cli_fd.num].name,sizeof(fd[cli_fd.num].name),0);	//echo
+				send(fd[cli_fd.flag].id," :",2,0);
                                 send(fd[cli_fd.flag].id,buf,num_bytes,0);
 				
 			}
 		}
 	}
-//	}
-//	else{
-	//	printf("sssssssss");
-	//	char recvbuf[2048];
-		//memset(recvbuf,0,2048);
-		//if((num_bytes=recv(cli_fd.id,recvbuf,2048,0))<=0){
-                //        for(i=0;i<Max;i++){
-                //                if(fd[i].id==cli_fd.id){
-                    //                    fd[i].id=0;
-                   //                     break;
-                  //              }
-                 //       }
-		//}
-
-		
-//			int fptr;
- //                      	fptr=open("test.txt",O_RDONLY);	
-//               		sendfile(fd[num_sendfile].id,fptr,NULL,fsize("test.txt"));
-		
-	//	num_sendfile=-1;
-	//}
 }
 unsigned long fsize(char * file){  //看檔案的大小
  	FILE *f=fopen(file,"r");
