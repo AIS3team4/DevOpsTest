@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: echo
         run: | 
-          echo "hello !" > 1.txt
+          echo "hello !"
           exit 1
       - name: flawfinder-action 
         uses: deep5050/flawfinder-action@master
