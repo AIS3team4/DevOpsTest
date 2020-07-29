@@ -16,6 +16,7 @@ jobs:
       - name: echo
         run: | 
           echo "hello !" > 1.txt
+          exit 1
       - name: flawfinder-action 
         uses: deep5050/flawfinder-action@master
         with:
