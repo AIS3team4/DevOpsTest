@@ -15,11 +15,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: echo
         run: |
-<<<<<<< HEAD
           echo "hello world!"
-=======
-          echo "hello world"
->>>>>>> 01bc07889a7e4614f0e60e5d3c5fa99ad4ac4dd0
       - name: flawfinder-action 
         uses: deep5050/flawfinder-action@master
         with:
